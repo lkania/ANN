@@ -1,6 +1,6 @@
 function ans_net = train_multilayer_network_online(net,patterns,err,g,g_der,learning_rate,b)
 
-	expected_output = patterns(:,2);
+	expected_output = patterns(:,3);
 	input = patterns(:,1:2);
 	patterns_quantity = size(input)(1);
 	layers_quantity = size(net)(2);
