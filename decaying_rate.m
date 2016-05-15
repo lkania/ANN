@@ -1,3 +1,3 @@
 function y = decaying_rate(x)
-	y = 1000/x;
+	y = 10/(10+x*0.5);
 end

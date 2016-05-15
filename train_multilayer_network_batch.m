@@ -19,6 +19,10 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 		end
 	end
 
+	hold on
+	xlabel('Number of iterations');
+	ylabel('Error');
+
 	do 
 		printf('Iteration: %d\n',iteration);
 		layer_in = input;
@@ -54,7 +58,7 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 
 		current_delta_error = 0.5*sum((expected_output-V{layers_quantity}).^2)/patterns_quantity;
 
-		printf('Error: %d\n',current_delta_error);
+		printf('Train Error: %d\n',current_delta_error);
 
 		%%%Adaptative Learning Rate%%%
 
@@ -95,6 +99,11 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 		fflush(stdout);
 
 		iteration=iteration+1;
+
+		plot(iteration,current_delta_error,'-+')
+		plot_title = sprintf('Error vs. Number of iterations. Error = %d',current_delta_error);
+		title(plot_title);
+
 
 	until (current_delta_error < err)
 

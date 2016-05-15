@@ -19,6 +19,11 @@ function ans_net = train_multilayer_network_online(net,patterns,err,g,g_der,lear
 		end
 	end
 
+	hold on
+	title('Error vs. Number of iterations');
+	xlabel('Number of iterations');
+	ylabel('Error');
+
 	do 
 		printf('Iteration: %d\n',iteration);
 		index = randperm(patterns_quantity);
@@ -98,6 +103,8 @@ function ans_net = train_multilayer_network_online(net,patterns,err,g,g_der,lear
 		fflush(stdout);
 
 		iteration=iteration+1;
+
+		plot(iteration,current_delta_error,'-+')
 
 	until (current_delta_error < err)
 
