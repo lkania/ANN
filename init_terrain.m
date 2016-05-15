@@ -1,12 +1,12 @@
-function init_xor_logistic
+function init_terrain
 
 	train_func=@train_multilayer_network_batch
-	g=@logistic;
-	g_der=@logistic_derivate;
-	b = 1;
-	learning_rate = @decaying_rate;
-	paths = 'test_xor_logistic.txt';
-	nodes_per_layer = [2,2,1]; 
+	g=@tanh_func;%@logistic;%@tanh_func;
+	g_der=@tanh_func_derivate;%@logistic_derivate;%tanh_func_derivate;
+	b = 0.5;
+	learning_rate = @constant_rate;%@decaying_rate;%@constant_rate;
+	paths = 'terrain.txt';
+	nodes_per_layer = [2,5,1]; 
 	err = 10^-3;
 	change_learning_rate_after_iterations = 5;
 	adaptative_learning_rate_a = 0.05;

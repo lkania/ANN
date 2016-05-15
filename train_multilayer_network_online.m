@@ -6,7 +6,6 @@ function ans_net = train_multilayer_network_online(net,patterns,err,g,g_der,lear
 	layers_quantity = size(net)(2);
 
 	iteration = 1;
-
 	delta_learning_rate = 0;
 	delta_error = 0;
 	tendency = 0; %1 == ascendent and -1 == descendent
