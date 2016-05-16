@@ -1,3 +1,4 @@
-function y = decaying_rate(x)
-	y = 10/(10+x*0.5);
+function y = decaying_rate(iteration)
+		
+			y = 10/(10+iteration);
 end

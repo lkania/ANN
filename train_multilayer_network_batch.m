@@ -1,4 +1,4 @@
-function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learning_rate,b,activate_learning_rate,change_learning_rate_after_iterations,adaptative_learning_rate_a,adaptative_learning_rate_b,activate_momentum,momentum_alpha)
+function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learning_rate,b,activate_learning_rate,change_learning_rate_after_iterations,adaptative_learning_rate_a,adaptative_learning_rate_b,activate_momentum,momentum_alpha,test_set)
 
 	expected_output = patterns(:,3);
 	input = patterns(:,1:2);
@@ -19,6 +19,8 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 		end
 	end
 
+	figure('Position',[50,50,1280,720]);
+	subplot(1,2,1);
 	hold on
 	xlabel('Number of iterations');
 	ylabel('Error');
@@ -32,10 +34,26 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 			layer_in = layer_out;
 		end
 
+		%Mean square error derivation
 		delta{layers_quantity} = g_der(b,V{layers_quantity}).*(expected_output-V{layers_quantity});
 
+		%ASK!!!
+		%delta{layers_quantity} = g_der(b,V{layers_quantity}).*(expected_output-V{layers_quantity})./patterns_quantity;
+
+		%Entropy error derivation
+		%delta{layers_quantity} = 0.5.*g_der(b,V{layers_quantity}).*((-1).*(1+expected_output).*(1./(1+V{layers_quantity}))+(1-expected_output).*(1./(1-V{layers_quantity})));
+
+		%Mean square error derivation + complexity
+		%delta{layers_quantity} = g_der(b,V{layers_quantity}).*(expected_output-V{layers_quantity})./patterns_quantity.+2.*abs(net{layers_quantity}(2:end,:));
+
+
 		for m=layers_quantity:-1:2
+			%Mean square error derivation
 			delta{m-1} = g_der(b,V{m-1}).*(delta{m}*(net{m}(2:end,:))');
+
+			%Mean square error derivation + complexity
+			%delta{m-1} = g_der(b,V{m-1}).*(delta{m}*(net{m}(2:end,:))') + 2.*abs(net{m}(2:end,:));
+
 			delta_weight = learning_rate(iteration)*[ones(size(V{m-1})(1),1).*(-1) V{m-1}]'*delta{m};
 			net{m} = net{m} + delta_weight;
 
@@ -55,8 +73,20 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 			previous_delta{1} = delta_weight + momentum_alpha .* previous_delta{1};
 		end
 
+		%Entropy error
+		%current_delta_error = 0.5.*sum((1.+expected_output).*log((1.+expected_output)./(1.+V{layers_quantity}))+(1.-expected_output).*log((1.-expected_output)./(1.-V{layers_quantity})))./patterns_quantity;
 
+		%Mean square error
 		current_delta_error = 0.5*sum((expected_output-V{layers_quantity}).^2)/patterns_quantity;
+
+		%Mean square error + complexity
+		%	complexity = 0;
+		%	for i=1:1:layers_quantity
+		%		complexity=complexity+sum(sum(net{i}.^2));
+		%	end
+		%
+		%	current_delta_error = 0.5*sum((expected_output-V{layers_quantity}).^2)/patterns_quantity + complexity;
+		%
 
 		printf('Train Error: %d\n',current_delta_error);
 
@@ -100,10 +130,16 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 
 		iteration=iteration+1;
 
+
+		subplot(1,2,1);
 		plot(iteration,current_delta_error,'-+')
 		plot_title = sprintf('Error vs. Number of iterations. Error = %d',current_delta_error);
 		title(plot_title);
+		drawnow;
 
+
+		%%Accuracy on test data vs. Epoch
+		test_epoch(net,test_set,g,b,layers_quantity,iteration,patterns);
 
 	until (current_delta_error < err)
 
