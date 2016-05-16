@@ -11,6 +11,6 @@ function output = test(learned_net,test_set,g,b,layers_quantity)
 
 		output = layer_in;
 
-		printf('Test Error: %d\n',0.5*sum((expected_output-output).^2)/size(test_set)(1));
+		%printf('Test Error: %d\n',0.5*sum((expected_output-output).^2)/size(test_set)(1));
 
 end

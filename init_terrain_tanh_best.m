@@ -1,12 +1,12 @@
-function init_terrain
+function init_terrain_tanh_best %Has the best error using Mean square error
 
 	train_func=@train_multilayer_network_batch
 	g=@tanh_func;%@logistic;%@logistic;%@tanh_func;
 	g_der=@tanh_func_derivate;%@logistic_derivate;%tanh_func_derivate;
 	b = 1;
-	learning_rate = @decaying_rate;%@decaying_rate;%@constant_rate;
+	learning_rate = @constant_rate;%@decaying_rate;%@constant_rate;
 	paths = 'terrain.txt';
-	nodes_per_layer = [2,6,1]; 
+	nodes_per_layer = [2,8,1]; 
 	err = 10^-3;
 	change_learning_rate_after_iterations = 5;
 	adaptative_learning_rate_a = 0.05;

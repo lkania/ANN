@@ -12,6 +12,10 @@ function test_epoch(learned_net,test_set,g,b,layers_quantity,epoch,training_set)
 		ylabel('Acuracy (%)');
 		plot(epoch,acuracy);
 
+		subplot(1,2,1);
+		hold on
+		plot(epoch,1-acuracy/100,'-or');
+
 		%Plot total set
 		%expected_output = [test_set(:,3);training_set(:,3)];
 		%output = test(learned_net,[test_set;training_set],g,b,layers_quantity);

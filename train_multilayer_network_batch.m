@@ -26,7 +26,6 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 	ylabel('Error');
 
 	do 
-		printf('Iteration: %d\n',iteration);
 		layer_in = input;
 		for m=1:layers_quantity
 			layer_out = g(b,([(ones(size(layer_in)(1),1)*(-1)) layer_in]*net{m}));
@@ -35,21 +34,18 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 		end
 
 		%Mean square error derivation
-		delta{layers_quantity} = g_der(b,V{layers_quantity}).*(expected_output-V{layers_quantity});
-
-		%ASK!!!
 		%delta{layers_quantity} = g_der(b,V{layers_quantity}).*(expected_output-V{layers_quantity})./patterns_quantity;
 
 		%Entropy error derivation
-		%delta{layers_quantity} = 0.5.*g_der(b,V{layers_quantity}).*((-1).*(1+expected_output).*(1./(1+V{layers_quantity}))+(1-expected_output).*(1./(1-V{layers_quantity})));
+		delta{layers_quantity} = V{layers_quantity}.*(1./(1+V{layers_quantity})).*(expected_output-V{layers_quantity})./patterns_quantity; 
 
 		%Mean square error derivation + complexity
 		%delta{layers_quantity} = g_der(b,V{layers_quantity}).*(expected_output-V{layers_quantity})./patterns_quantity.+2.*abs(net{layers_quantity}(2:end,:));
 
 
 		for m=layers_quantity:-1:2
-			%Mean square error derivation
-			delta{m-1} = g_der(b,V{m-1}).*(delta{m}*(net{m}(2:end,:))');
+			%Mean square error derivation | Entropy error derivation
+			delta{m-1} = g_der(b,V{m-1}).*(delta{m}*(net{m}(2:end,:))')./patterns_quantity;
 
 			%Mean square error derivation + complexity
 			%delta{m-1} = g_der(b,V{m-1}).*(delta{m}*(net{m}(2:end,:))') + 2.*abs(net{m}(2:end,:));
@@ -74,10 +70,10 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 		end
 
 		%Entropy error
-		%current_delta_error = 0.5.*sum((1.+expected_output).*log((1.+expected_output)./(1.+V{layers_quantity}))+(1.-expected_output).*log((1.-expected_output)./(1.-V{layers_quantity})))./patterns_quantity;
+		current_delta_error = 0.5.*sum((1+expected_output).*log((1+expected_output)./(1.+V{layers_quantity}))+(1.-expected_output).*log((1.-expected_output)./(1.-V{layers_quantity})))./patterns_quantity;
 
 		%Mean square error
-		current_delta_error = 0.5*sum((expected_output-V{layers_quantity}).^2)/patterns_quantity;
+		%current_delta_error = 0.5*sum((expected_output-V{layers_quantity}).^2)/patterns_quantity;
 
 		%Mean square error + complexity
 		%	complexity = 0;
@@ -87,8 +83,6 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 		%
 		%	current_delta_error = 0.5*sum((expected_output-V{layers_quantity}).^2)/patterns_quantity + complexity;
 		%
-
-		printf('Train Error: %d\n',current_delta_error);
 
 		%%%Adaptative Learning Rate%%%
 
