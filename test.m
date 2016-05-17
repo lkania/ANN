@@ -1,4 +1,4 @@
-function test(learned_net,test_set,g,b,layers_quantity)
+function output = test(learned_net,test_set,g,b,layers_quantity)
 		input = test_set(:,1:2);
 		expected_output = test_set(:,3);
 
@@ -9,6 +9,8 @@ function test(learned_net,test_set,g,b,layers_quantity)
 			layer_in = layer_out;
 		end
 
-		abs(layer_in-expected_output)
+		output = layer_in;
+
+		%printf('Test Error: %d\n',0.5*sum((expected_output-output).^2)/size(test_set)(1));
 
 end
