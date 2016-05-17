@@ -1,3 +1,3 @@
 function y = constant_rate(x)
-	y = 1;
+	y = 0.5;
 end

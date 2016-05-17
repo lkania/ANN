@@ -1,4 +1,4 @@
-function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learning_rate,b,activate_learning_rate,change_learning_rate_after_iterations,adaptative_learning_rate_a,adaptative_learning_rate_b,activate_momentum,momentum_alpha,test_set,activate_regularization, regularization_parameter,error_type)
+function ans_net = train_multilayer_network_batch_copia(net,patterns,err,g,g_der,learning_rate,b,activate_learning_rate,change_learning_rate_after_iterations,adaptative_learning_rate_a,adaptative_learning_rate_b,activate_momentum,momentum_alpha,test_set,activate_regularization, regularization_parameter,error_type)
 
 	expected_output = patterns(:,3);
 	input = patterns(:,1:2);
@@ -37,7 +37,7 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
   
   subplot(2,3,4);
   scatter3([patterns;test_set](:,1),[patterns;test_set](:,2),[patterns;test_set](:,3),'filled');
-  title('Original function');
+  
   
 	do 
 		layer_in = input;
@@ -120,9 +120,9 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 					old_net = net;
 				end
 
-				diff_error = round(previous_delta_error.*10000)./10000 - round(current_delta_error.*10000)./10000;
+				diff_error = previous_delta_error - current_delta_error;
 
-				if (diff_error<0 && tendency == 1) || (diff_error>=0 && tendency ==-1)
+				if (diff_error<0 && tendency == 1) || (diff_error>0 && tendency ==-1)
 					iterations_with_the_same_tendency=iterations_with_the_same_tendency+1;
 				else
 					iterations_with_the_same_tendency=0;
@@ -131,13 +131,13 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 
 				if iterations_with_the_same_tendency==change_learning_rate_after_iterations
 					if tendency == 1
-						delta_learning_rate = (-1).* adaptative_learning_rate_b * (delta_learning_rate); 
+						delta_learning_rate = delta_learning_rate + (-1).* adaptative_learning_rate_b * (delta_learning_rate); 
 						net = old_net;
             momentum_alpha=0;
 					end
 
 					if tendency == -1
-						delta_learning_rate =  adaptative_learning_rate_a;
+						delta_learning_rate = delta_learning_rate + adaptative_learning_rate_a;
             momentum_alpha=previous_momentum_alpha;
 					end
 
@@ -152,37 +152,31 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 
 		fflush(stdout);
 
-		iteration=iteration+1;
-
-    if mod(iteration,100)==0
-      subplot(2,3,1);
-      legend_error = sprintf(';Train Error = %d;',current_delta_error);
-
-      plot(iteration,current_delta_error);
-      plot_title = sprintf('Error vs. Number of iterations. Train Error = %d',current_delta_error);
-      title(plot_title);
-%      lege=legend(legend_error);
- %     set(lege,'textposition','left');
-      drawnow;
+		iteration=iteration+1
 
 
-      %%Accuracy on test data vs. Epoch
-      test_epoch(net,test_set,g,b,layers_quantity,iteration,patterns);
-
-      %%Print learning rate
-      subplot(2,3,2);
-      hold on
-      plot(iteration,(learning_rate(iteration)+delta_learning_rate));
-      plot_title = sprintf('Learning rate vs. Number of iterations. Learning rate = %d',(learning_rate(iteration)+delta_learning_rate));
-      title(plot_title);
-    endif
-    if mod(iteration,100)==0
-      subplot(2,3,6);
-      scatter3(patterns(:,1),patterns(:,2),V{layers_quantity},'filled');
-      title('trainning set');
-    endif
     
-	until (current_delta_error < err)
+	until (iteration>1500 || current_delta_error < err)
+
+    subplot(2,3,1);
+		plot(iteration,current_delta_error)
+		plot_title = sprintf('Error vs. Number of iterations. Error = %d',current_delta_error);
+		title(plot_title);
+		drawnow;
+
+
+		%%Accuracy on test data vs. Epoch
+		test_epoch(net,test_set,g,b,layers_quantity,iteration,patterns);
+
+    %%Print learning rate
+    subplot(2,3,3);
+    hold on
+    plot(iteration,(learning_rate(iteration)+delta_learning_rate));
+		plot_title = sprintf('Learning rate vs. Number of iterations. Learning rate = %d',(learning_rate(iteration)+delta_learning_rate));
+		title(plot_title);
+    
+    subplot(2,3,6);
+    scatter3(patterns(:,1),patterns(:,2),V{layers_quantity},'filled');
 
 	ans_net = net;
 

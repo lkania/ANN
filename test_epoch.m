@@ -2,25 +2,28 @@ function test_epoch(learned_net,test_set,g,b,layers_quantity,epoch,training_set)
 		expected_output = test_set(:,3);
 		output = test(learned_net,test_set,g,b,layers_quantity);
 
-		acuracy=(1-0.5*sum((expected_output-output).^2)/size(test_set)(1))*100;
 
-		subplot(1,2,2);
+		subplot(2,3,1);
 		hold on
-		plot_title = sprintf('Acuracy (%%) on Test Set vs. Number of iterations. Acuracy = %d',acuracy);
-		title(plot_title);
-		xlabel('Number of iterations');
-		ylabel('Acuracy (%)');
-		plot(epoch,acuracy);
-
-		subplot(1,2,1);
-		hold on
-		plot(epoch,1-acuracy/100,'-or');
-
+    test_error=0.5*sum((expected_output-output).^2)/size(test_set)(1);
+    plot_legend = sprintf('Test Error = %d',test_error);
+		plot(epoch,test_error,'r');
+    legend(plot_legend);
+ 
+    
+    
+    
+    
 		%Plot total set
-		%expected_output = [test_set(:,3);training_set(:,3)];
-		%output = test(learned_net,[test_set;training_set],g,b,layers_quantity);
+    if mod(epoch,100)==0
+      expected_output = [test_set(:,3);training_set(:,3)];
+      output = test(learned_net,[test_set;training_set],g,b,layers_quantity);
 
-		%subplot(1,3,3);
-		%hold on
-		%plot(epoch,(1-0.5*sum((expected_output-output).^2)/size([test_set;training_set])(1))*100);
+      %subplot(1,3,3);
+      %hold on
+      subplot(2,3,5);
+      scatter3([test_set;training_set](:,1),[test_set;training_set](:,2),output,'filled');
+      title('Learned function (trainning set + test set)'); 
+     %plot(epoch,(1-0.5*sum((expected_output-output).^2)/size([test_set;training_set])(1))*100);
+    endif
 end
