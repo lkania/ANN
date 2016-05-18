@@ -1,6 +1,6 @@
 function init_terrain_logistic %Has the best error using Mean square error
 
-	train_func=@train_multilayer_network_batch
+	train_func=@train_multilayer_network_online
 	g=@logistic;%@logistic;%@tanh_func;
 	g_der=@logistic_derivate;%tanh_func_derivate;
 	b = 0.5;

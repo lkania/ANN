@@ -1,6 +1,6 @@
 function init_xor_tanh
 
-	train_func=@train_multilayer_network_batch
+	train_func=@train_multilayer_network_online
 	g=@tanh_func;
 	g_der=@tanh_func_derivate;
 	b = 1;
