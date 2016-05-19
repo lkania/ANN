@@ -4,7 +4,7 @@ function init_terrain_logistic %Has the best error using Mean square error
 	g=@logistic;%@logistic;%@tanh_func;
 	g_der=@logistic_derivate;%tanh_func_derivate;
 	b = 0.5;
-	learning_rate =@decaying_rate;%@constant_rate;% @decaying_rate;%@constant_rate;
+	learning_rate =@constant_rate;%@constant_rate;% @decaying_rate;%@constant_rate;
 	paths = 'terrain.txt';
 	nodes_per_layer = [2,40,1]; 
 	err = 10^-3;

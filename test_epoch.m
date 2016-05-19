@@ -23,6 +23,7 @@ function test_epoch(learned_net,test_set,g,b,layers_quantity,epoch,training_set)
       %hold on
       subplot(2,3,5);
       scatter3([test_set;training_set](:,1),[test_set;training_set](:,2),output,'filled');
+      axis([-4 4 -4 5 -0.5 1]);
       title('Learned function (trainning set + test set)'); 
      %plot(epoch,(1-0.5*sum((expected_output-output).^2)/size([test_set;training_set])(1))*100);
     endif
