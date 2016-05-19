@@ -1,3 +1,3 @@
 function y = decaying_rate(iteration)
-			y = 2*6000/(2*12000+iteration);
+			y = 14000/(24000+iteration);
 end

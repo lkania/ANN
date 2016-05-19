@@ -36,7 +36,9 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
   
   
   subplot(2,3,4);
-  scatter3([patterns;test_set](:,1),[patterns;test_set](:,2),[patterns;test_set](:,3),'filled');
+  scatter3(patterns(:,1),patterns(:,2),patterns(:,3),'filled');
+  %scatter3([patterns;test_set](:,1),[patterns;test_set](:,2),[patterns;test_set](:,3),'filled');
+  axis([-4 4 -4 5 -0.5 1]);
   title('Original function');
   
 	do 
@@ -64,10 +66,10 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 			%Mean square error derivation + complexity
 			%delta{m-1} = g_der(b,V{m-1}).*(delta{m}*(net{m}(2:end,:))') + 2.*abs(net{m}(2:end,:));
 
-      if activate_regularization
-     regularization{m}=(regularization_parameter./patterns_quantity-1./(learning_rate(iteration)+delta_learning_rate)).*net{m};
-     regularization{m}(1,:)=zeros(1,size(regularization{m})(2));
-     endif
+		    if activate_regularization
+		     regularization{m}=(regularization_parameter./patterns_quantity-1./(learning_rate(iteration)+delta_learning_rate)).*net{m};
+		     regularization{m}(1,:)=zeros(1,size(regularization{m})(2));
+		    endif
 			delta_weight = (learning_rate(iteration)+delta_learning_rate)*([ones(size(V{m-1})(1),1).*(-1) V{m-1}]'*delta{m}+regularization{m});
 			net{m} = net{m} + delta_weight;
 
@@ -86,17 +88,17 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 			net{1} = net{1} + momentum_alpha .* previous_delta{1};
 			previous_delta{1} = delta_weight + momentum_alpha .* previous_delta{1};
 		end
-
+	 output = test(net, patterns, g, b, layers_quantity);
      switch (error_type)
       case "square"
         %Mean square error
-        current_delta_error = 0.5*sum((expected_output-V{layers_quantity}).^2)/patterns_quantity;
+        current_delta_error = 0.5*sum((expected_output-output).^2)/patterns_quantity;
 
        case "entropy"
         %Entropy error
-        partial_error_1=(1.-expected_output).*log((1.-expected_output)./(1.-V{layers_quantity}));
+        partial_error_1=(1.-expected_output).*log((1.-expected_output)./(1.-output));
         partial_error_1(~isfinite(partial_error_1))=0;
-        partial_error_2=(1+expected_output).*log((1+expected_output)./(1.+V{layers_quantity}));
+        partial_error_2=(1+expected_output).*log((1+expected_output)./(1.+output));
         partial_error_2(~isfinite(partial_error_2))=0;
         
         current_delta_error = 0.5.*sum(partial_error_2+partial_error_1)./patterns_quantity;
@@ -179,6 +181,7 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
     if mod(iteration,100)==0
       subplot(2,3,6);
       scatter3(patterns(:,1),patterns(:,2),V{layers_quantity},'filled');
+      axis([-4 4 -4 5 -0.5 1]);
       title('trainning set');
     endif
     

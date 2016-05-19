@@ -4,7 +4,7 @@ function init_terrain_tanh_best %Has the best error using Mean square error
 	g=@tanh_func;%@logistic;%@logistic;%@tanh_func;
 	g_der=@tanh_func_derivate;%@logistic_derivate;%tanh_func_derivate;
 	b = 1;
-	learning_rate = @constant_rate;%@decaying_rate;%@constant_rate;
+	learning_rate = @decaying_rate;%@decaying_rate;%@constant_rate;
 	paths = 'terrain.txt';
 	nodes_per_layer = [2,30,1]; 
 	err = 10^-3;
