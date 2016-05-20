@@ -131,7 +131,7 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 
 				if iterations_with_the_same_tendency==change_learning_rate_after_iterations
 					if tendency == 1
-						delta_learning_rate = (-1).* adaptative_learning_rate_b * (delta_learning_rate); 
+						delta_learning_rate = (-1).* adaptative_learning_rate_b * (learning_rate(iteration)); 
 						net = old_net;
             momentum_alpha=0;
 					end

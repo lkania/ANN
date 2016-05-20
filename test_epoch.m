@@ -15,7 +15,7 @@ function test_epoch(learned_net,test_set,g,b,layers_quantity,epoch,training_set)
     
     
 		%Plot total set
-    if mod(epoch,100)==0
+    if mod(epoch,1)==0
       expected_output = [test_set(:,3);training_set(:,3)];
       output = test(learned_net,[test_set;training_set],g,b,layers_quantity);
 

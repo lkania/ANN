@@ -1,19 +1,19 @@
 function init_xor_tanh
 
-	train_func=@train_multilayer_network_batch
+	train_func=@train_multilayer_network_online
 	g=@tanh_func;
 	g_der=@tanh_func_derivate;
 	b = 1;
 	learning_rate = @constant_rate;
 	paths = 'test_xor_tanh.txt';
-	nodes_per_layer = [2,2,1]; 
+	nodes_per_layer = [2,3,1]; 
 	err = 10^-3;
 	change_learning_rate_after_iterations = 5;
 	adaptative_learning_rate_a = 0.05;
 	adaptative_learning_rate_b = 0.5;
-	activate_learning_rate = false;
-	activate_momentum=false;
-	momentum_alpha=0.5;
+	activate_learning_rate = true;
+	activate_momentum=true;
+	momentum_alpha=0.9;
   activate_normalization=false;
   activate_regularization=false;
   regularization_parameter=0.1;
