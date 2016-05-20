@@ -20,7 +20,7 @@ function [training_set test_set] = get_trainning_set(path,activate_normalization
 
 	patterns_quantity = size(information_set)(1);
 
-	training_set_size = ceil(patterns_quantity*3/4);%1/4);
+	training_set_size = ceil(patterns_quantity*1/16);
 
 	training_set = information_set(1:training_set_size,:);
 	test_set = information_set((training_set_size+1):patterns_quantity,:);
