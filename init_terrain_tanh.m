@@ -1,6 +1,6 @@
-function init_terrain_tanh_best %Has the best error using Mean square error
+function init_terrain_tanh
 
-	train_func=@train_multilayer_network_online
+	train_func=@train_multilayer_network_batch
 	g=@tanh_func;%@logistic;%@logistic;%@tanh_func;
 	g_der=@tanh_func_derivate;%@logistic_derivate;%tanh_func_derivate;
 	b = 1;
@@ -15,7 +15,7 @@ function init_terrain_tanh_best %Has the best error using Mean square error
 	activate_momentum=true;
 	momentum_alpha=0.4;
 	
-  activate_normalization=true;
+  activate_normalization=false;
   normalization_type="tanh";
   
   activate_regularization=false;

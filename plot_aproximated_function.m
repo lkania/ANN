@@ -6,6 +6,7 @@ function plot_aproximated_function(test_set,training_set,g,b,layers_quantity,lea
     subplot(2,3,5);
     scatter3([test_set;training_set](:,1),[test_set;training_set](:,2),output,'filled');
     title('Learned function (trainning set + test set)'); 
+	axis([-4 4 -4 5 -0.5 1]);
    	xlabel('x');
 	ylabel('y');
 	zlabel('z');

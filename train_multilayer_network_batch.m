@@ -27,17 +27,8 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 	end
 
 	figure('Position',[50,50,1200,600]);
-	subplot(2,3,1);
-	hold on
-	xlabel('Number of iterations');
-	ylabel('Error');
-
-  
-  
-  
-  subplot(2,3,4);
-  scatter3([patterns;test_set](:,1),[patterns;test_set](:,2),[patterns;test_set](:,3),'filled');
-  title('Original function');
+ 
+	plot_original_function(patterns,test_set);
   
 	do 
 		layer_in = input;
@@ -87,21 +78,23 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 			previous_delta{1} = delta_weight + momentum_alpha .* previous_delta{1};
 		end
 
-     switch (error_type)
-      case "square"
-        %Mean square error
-        current_delta_error = 0.5*sum((expected_output-V{layers_quantity}).^2)/patterns_quantity;
+	output = test(net, patterns, g, b, layers_quantity);
 
-       case "entropy"
-        %Entropy error
-        partial_error_1=(1.-expected_output).*log((1.-expected_output)./(1.-V{layers_quantity}));
-        partial_error_1(~isfinite(partial_error_1))=0;
-        partial_error_2=(1+expected_output).*log((1+expected_output)./(1.+V{layers_quantity}));
-        partial_error_2(~isfinite(partial_error_2))=0;
-        
-        current_delta_error = 0.5.*sum(partial_error_2+partial_error_1)./patterns_quantity;
 
-      endswitch
+    switch (error_type)
+    	case "square"
+        	%Mean square error
+        	current_delta_error = 0.5*sum((expected_output-output).^2)/patterns_quantity;
+
+       	case "entropy"
+       		%Entropy error
+        	partial_error_1=(1.-expected_output).*log((1.-expected_output)./(1-output));
+        	partial_error_1(~isfinite(partial_error_1))=0;
+        	partial_error_2=(1+expected_output).*log((1+expected_output)./(1+output));
+        	partial_error_2(~isfinite(partial_error_2))=0;
+        	current_delta_error = 0.5.*sum(partial_error_2+partial_error_1)./patterns_quantity;
+
+	endswitch
 
 
     if activate_regularization
@@ -120,7 +113,8 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 					old_net = net;
 				end
 
-				diff_error = round(previous_delta_error.*10000)./10000 - round(current_delta_error.*10000)./10000;
+			   	round_rate=(err.**(-1)).*10;
+          		diff_error = round(previous_delta_error.*round_rate)./round_rate - round(current_delta_error.*round_rate)./round_rate;
 
 				if (diff_error<0 && tendency == 1) || (diff_error>=0 && tendency ==-1)
 					iterations_with_the_same_tendency=iterations_with_the_same_tendency+1;
@@ -133,12 +127,12 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 					if tendency == 1
 						delta_learning_rate = (-1).* adaptative_learning_rate_b * (learning_rate(iteration)); 
 						net = old_net;
-            momentum_alpha=0;
+            			momentum_alpha=0;
 					end
 
 					if tendency == -1
 						delta_learning_rate =  adaptative_learning_rate_a;
-            momentum_alpha=previous_momentum_alpha;
+            			momentum_alpha=previous_momentum_alpha;
 					end
 
 					iterations_with_the_same_tendency=0;
@@ -147,7 +141,7 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 				previous_delta_error = current_delta_error;
 
 			end
-			%%%
+		%%%
 
 
 		fflush(stdout);
@@ -155,31 +149,17 @@ function ans_net = train_multilayer_network_batch(net,patterns,err,g,g_der,learn
 		iteration=iteration+1;
 
     if mod(iteration,100)==0
-      subplot(2,3,1);
-      legend_error = sprintf(';Train Error = %d;',current_delta_error);
+    
+      	test_error = test_epoch(net,test_set,g,b,layers_quantity,iteration,patterns);
 
-      plot(iteration,current_delta_error);
-      plot_title = sprintf('Error vs. Number of iterations. Train Error = %d',current_delta_error);
-      title(plot_title);
-%      lege=legend(legend_error);
- %     set(lege,'textposition','left');
-      drawnow;
+      	plot_error_vs_epoch(current_delta_error,test_error,iteration);
+ 
+ 		plot_learning_rate_vs_epoch(learning_rate(iteration)+delta_learning_rate,iteration);
 
+ 		plot_training_set(patterns,output);
 
-      %%Accuracy on test data vs. Epoch
-      test_epoch(net,test_set,g,b,layers_quantity,iteration,patterns);
+ 		drawnow;
 
-      %%Print learning rate
-      subplot(2,3,2);
-      hold on
-      plot(iteration,(learning_rate(iteration)+delta_learning_rate));
-      plot_title = sprintf('Learning rate vs. Number of iterations. Learning rate = %d',(learning_rate(iteration)+delta_learning_rate));
-      title(plot_title);
-    endif
-    if mod(iteration,100)==0
-      subplot(2,3,6);
-      scatter3(patterns(:,1),patterns(:,2),V{layers_quantity},'filled');
-      title('trainning set');
     endif
     
 	until (current_delta_error < err)

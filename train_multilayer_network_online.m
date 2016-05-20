@@ -116,6 +116,7 @@ function ans_net = train_multilayer_network_online(net,patterns,err,g,g_der,lear
           if iterations_with_the_same_tendency==0
             old_net = net;
           end
+
           round_rate=(err.**(-1)).*10;
           diff_error = round(previous_delta_error.*round_rate)./round_rate - round(current_delta_error.*round_rate)./round_rate;
 
@@ -152,7 +153,6 @@ function ans_net = train_multilayer_network_online(net,patterns,err,g,g_der,lear
 
 		iteration=iteration+1;
     
-	drawnow;
   	if mod(iteration,100)==0
 
       	test_error = test_epoch(net,test_set,g,b,layers_quantity,iteration,patterns);
@@ -162,6 +162,8 @@ function ans_net = train_multilayer_network_online(net,patterns,err,g,g_der,lear
  		plot_learning_rate_vs_epoch(learning_rate(iteration)+delta_learning_rate,iteration);
 
  		plot_training_set(patterns,output);
+
+		drawnow;
 
     endif
 

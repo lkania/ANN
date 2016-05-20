@@ -6,21 +6,21 @@ function [training_set test_set] = get_trainning_set(path,activate_normalization
   
   
 	if(activate_normalization)
-    switch normalization_type
-      case "tanh"
-        for k=1:1:3 
-          information_set(:,k) = ((information_set(:,k)-mean(information_set(:,k)))./(max(information_set(:,k))-min(information_set(:,k))));
-		    endfor
-      case "logistic" 
-        for k=1:1:3 
-          information_set(:,k) = ((information_set(:,k)-min(information_set(:,k)))./(max(information_set(:,k))-min(information_set(:,k))));
-		    endfor
-    end
+	    switch normalization_type
+	      case "tanh"
+	        for k=1:1:3 
+	          information_set(:,k) = ((information_set(:,k)-mean(information_set(:,k)))./(max(information_set(:,k))-min(information_set(:,k))));
+			    endfor
+	      case "logistic" 
+	        for k=1:1:3 
+	          information_set(:,k) = ((information_set(:,k)-min(information_set(:,k)))./(max(information_set(:,k))-min(information_set(:,k))));
+			    endfor
+	    end
 	end
 
 	patterns_quantity = size(information_set)(1);
 
-	training_set_size = ceil(patterns_quantity*1/16);
+	training_set_size = ceil(patterns_quantity*3/4);
 
 	training_set = information_set(1:training_set_size,:);
 	test_set = information_set((training_set_size+1):patterns_quantity,:);
